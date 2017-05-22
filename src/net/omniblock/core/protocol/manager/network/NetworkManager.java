@@ -281,8 +281,6 @@ public class NetworkManager {
 		
 		return String.join(",", data);
 		
-		
-		
 	}
 	
 	public static enum InjectorStatus {
