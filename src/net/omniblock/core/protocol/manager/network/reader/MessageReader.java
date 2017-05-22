@@ -16,8 +16,6 @@ public class MessageReader implements Reader {
 		
 		if(object.has(MessageType.PLAYER_SEND_TO_GAME.getKey())) {
 			
-			System.out.println("wtf??");
-			
 			JSONObject obj = object.getJSONObject(MessageType.PLAYER_SEND_TO_GAME.getKey());
 			
 			String playername = obj.getString("playername");
@@ -35,6 +33,16 @@ public class MessageReader implements Reader {
 			ServerType type = ServerType.valueOf(obj.getString("servertype"));
 			
 			NetworkManager.sendPlayerToServer(playername, type);
+			return ReaderStatus.SUCESS;
+			
+		} else if(object.has(MessageType.PLAYER_SEND_TO_NAMED_SERVER.getKey())) {
+			
+			JSONObject obj = object.getJSONObject(MessageType.PLAYER_SEND_TO_NAMED_SERVER.getKey());
+			
+			String playername = obj.getString("playername");
+			String servername = obj.getString("servername");
+			
+			NetworkManager.sendPlayerToServer(playername, servername);
 			return ReaderStatus.SUCESS;
 			
 		} else if(object.has(MessageType.PLAYER_SEND_BAN.getKey())) {
@@ -57,8 +65,6 @@ public class MessageReader implements Reader {
 					.addString(obj.getString("playername"))
 					.addString(obj.getString("moderator"))
 					.addString(obj.getString("reason"));
-			
-			System.out.println("CATCHED KICK!");
 			
 			ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
 			return ReaderStatus.SUCESS;
@@ -105,7 +111,17 @@ public class MessageReader implements Reader {
 					.addString(obj.getString("playername"))
 					.addString(obj.getString("hash"));
 			
-			System.out.println("sending texture pack...");
+			ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+			return ReaderStatus.SUCESS;
+			
+		} else if(object.has(MessageType.REQUEST_PLAYER_GAME_LOBBY_SERVERS.getKey())) {
+			
+			JSONObject obj = object.getJSONObject(MessageType.REQUEST_PLAYER_GAME_LOBBY_SERVERS.getKey());
+			
+			PacketModifier modifier = new PacketModifier()
+					.addString(MessageType.REQUEST_PLAYER_GAME_LOBBY_SERVERS.getKey())
+					.addString(obj.getString("playername"))
+					.addString(NetworkManager.getLobbyServers(ServerType.valueOf(obj.getString("servertype"))));
 			
 			ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
 			return ReaderStatus.SUCESS;
@@ -159,10 +175,13 @@ public class MessageReader implements Reader {
 		WELCOME_PROXY("WELCOME"),
 		BYE_PROXY("BYE"),
 		
+		REQUEST_PLAYER_GAME_LOBBY_SERVERS("RPGLS"),
+		
 		SERVER_SOCKET_INFO("SSOCK"),
 		SERVER_REMOVE_INFO("SSSI"),
 		SERVER_RELOAD_INFO("SRI"),
 		
+		PLAYER_SEND_TO_NAMED_SERVER("PSTNS"),
 		PLAYER_SEND_TO_SERVER("PSTS"),
 		PLAYER_SEND_TO_GAME("PSTG"),
 		PLAYER_SEND_MESSAGE("PSMSG"),

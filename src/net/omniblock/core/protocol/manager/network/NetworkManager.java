@@ -1,7 +1,9 @@
 package net.omniblock.core.protocol.manager.network;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
@@ -197,6 +199,36 @@ public class NetworkManager {
 		
 	}
 	
+	public static void sendPlayerToServer(String name, String servername){
+		
+		Entry<String, ServerStructure> search = NETWORK_SERVERS.entrySet().stream()
+		.filter(entry -> entry.getValue().getServerName().equalsIgnoreCase(servername))
+		.filter(entry -> !entry.getValue().isFull())
+		.findAny().orElse(null);
+		
+		if(search == null) {
+			
+			PacketModifier modifier = new PacketModifier()
+					.addString(MessageType.PLAYER_SEND_MESSAGE.getKey())
+					.addString(name)
+					.addString("&cEl servidor al que estas intentando entrar está lleno o esta desactivado.");
+			
+			ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+			return;
+			
+		}
+		
+		PacketModifier modifier = new PacketModifier()
+				.addString(MessageType.PLAYER_SEND_TO_SERVER.getKey())
+				.addString(name)
+				.addString(search.getValue().getServerName())
+				.addBoolean(false);
+		
+		ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+		return;
+		
+	}
+	
 	public static void sendPlayerToServer(String name, ServerType type) {
 		
 		Entry<String, ServerStructure> search = NETWORK_SERVERS.entrySet().stream()
@@ -227,6 +259,29 @@ public class NetworkManager {
 		
 		ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
 		return;
+		
+	}
+	
+	public static String getLobbyServers(ServerType type){
+		
+		List<String> data = new ArrayList<String>();
+		List<ServerStructure> structures = new ArrayList<ServerStructure>();
+		
+		for(Map.Entry<String, ServerStructure> k : NETWORK_SERVERS.entrySet()){
+			if(k.getValue().getServerType() == type){
+				structures.add(k.getValue());
+			}
+		}
+		
+		structures.stream().forEach(structure -> {
+			
+			data.add(structure.getServerName() + "*" + structure.getOnlinePlayers());
+			
+		});
+		
+		return String.join(",", data);
+		
+		
 		
 	}
 	
