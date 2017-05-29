@@ -12,6 +12,20 @@ public class ConsoleWritter {
 	
 	public ConsoleWritter() { }
 	
+	public void printLines(String...lines) {
+
+		for(String text : lines){
+			
+			text = ConsoleColorUtil.translateColors(text, '&');
+			logText(text, true);
+			continue;
+			
+		}
+		
+		return;
+		
+	}
+	
 	public void printLine(String text) {
 
 		text = ConsoleColorUtil.translateColors(text, '&');
@@ -47,6 +61,14 @@ public class ConsoleWritter {
 	public void printError(String text) {
 		
 		String prefix = ConsoleColorUtil.translateColors("&cERROR&r", '&');
+		logText(prefix + " " + ConsoleColorUtil.translateColors(text, '&'), true);
+		return;
+		
+	}
+	
+	public void printWarning(String text) {
+		
+		String prefix = ConsoleColorUtil.translateColors("&eADVERT&r", '&');
 		logText(prefix + " " + ConsoleColorUtil.translateColors(text, '&'), true);
 		return;
 		
