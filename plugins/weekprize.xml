@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<WeekPrize>
+    <Prize Type="Skywars">
+        <Date>
+            <Day>29/05/2017</Day>
+            <Time>6:00PM</Time>
+        </Date>
+        <Date>
+            <Day>30/05/2017</Day>
+            <Time>6:00PM</Time>
+        </Date>
+        <Date>
+            <Day>31/05/2017</Day>
+            <Time>6:00PM</Time>
+        </Date>
+    </Prize>
+</WeekPrize>

@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<Ranks>
+    <Rank>
+        <ID>0</ID>
+        <Enum>USER</Enum>
+        <Carrier>@NONE</Carrier>
+        <Permissions>
+            ;
+        </Permissions>
+    </Rank>
+    <Rank>
+        <ID>1</ID>
+        <Enum>GOLEM</Enum>
+        <Carrier>USER</Carrier>
+        <Permissions>
+            skywars.powers;a
+        </Permissions>
+    </Rank>
+    <Rank>
+        <ID>2</ID>
+        <Enum>TITAN</Enum>
+        <Carrier>GOLEM</Carrier>
+        <Permissions>
+            skywars.powers;a
+        </Permissions>
+    </Rank>
+    <Rank>
+        <ID>3</ID>
+        <Enum>HELPER</Enum>
+        <Carrier>TITAN</Carrier>
+        <Permissions>
+            skywars.powers;a
+        </Permissions>
+    </Rank>
+    <Rank>
+        <ID>4</ID>
+        <Enum>MOD</Enum>
+        <Carrier>HELPER</Carrier>
+        <Permissions>
+            skywars.powers;a
+        </Permissions>
+    </Rank>
+    <Rank>
+        <ID>5</ID>
+        <Enum>BNF</Enum>
+        <Carrier>USER</Carrier>
+        <Permissions>
+            skywars.powers;a
+        </Permissions>
+    </Rank>
+    <Rank>
+        <ID>6</ID>
+        <Enum>GM</Enum>
+        <Carrier>BNF</Carrier>
+        <Permissions>
+            skywars.powers;a
+        </Permissions>
+    </Rank>
+    <Rank>
+        <ID>7</ID>
+        <Enum>ADMIN</Enum>
+        <Carrier>MOD</Carrier>
+        <Permissions>
+            *;omniblock.network.cmd.ignore;omniblock.network.moderator;skywars.powers;omniblock.network.bank
+        </Permissions>
+    </Rank>
+    <Rank>
+        <ID>8</ID>
+        <Enum>CEO</Enum>
+        <Carrier>ADMIN</Carrier>
+        <Permissions>
+            *;omniblock.network.cmd.ignore;omniblock.network.moderator;skywars.powers;omniblock.network.bank
+        </Permissions>
+    </Rank>
+</Ranks>
+
+
+
+
+
+

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<Updater>
+    <Plugin>
+        <Name>OmniNetwork</Name>
+        <Artifact>/updater/OmniNetwork.jar</Artifact>
+        <Version>1.7.9</Version>
+    </Plugin>
+    <Plugin>
+        <Name>SkyWars</Name>
+        <Artifact>/updater/SkyWars.jar</Artifact>
+        <Version>12.0.2</Version>
+    </Plugin>
+</Updater>
