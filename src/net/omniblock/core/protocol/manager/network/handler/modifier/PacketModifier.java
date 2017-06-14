@@ -99,7 +99,7 @@ public class PacketModifier implements Serializable {
 		
 	}
 	
-public Integer getInteger(int arg) {
+	public Integer getInteger(int arg) {
 		
 		return Integers.get(arg);
 		

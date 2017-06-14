@@ -25,6 +25,28 @@ public class MessageReader implements Reader {
 			GameManager.sendPlayerToGame(playername, party, preset);
 			return ReaderStatus.SUCESS;
 			
+		} else if(object.has(MessageType.PLAYER_LOGIN_EVALUATE.getKey())) {
+			
+			JSONObject obj = object.getJSONObject(MessageType.PLAYER_LOGIN_EVALUATE.getKey());
+			
+			PacketModifier modifier = new PacketModifier()
+					.addString(MessageType.PLAYER_LOGIN_EVALUATE.getKey())
+					.addString(obj.getString("playername"));
+			
+			ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+			return ReaderStatus.SUCESS;
+			
+		} else if(object.has(MessageType.PLAYER_LOGIN_SUCESS.getKey())) {
+			
+			JSONObject obj = object.getJSONObject(MessageType.PLAYER_LOGIN_SUCESS.getKey());
+			
+			PacketModifier modifier = new PacketModifier()
+					.addString(MessageType.PLAYER_LOGIN_SUCESS.getKey())
+					.addString(obj.getString("playername"));
+			
+			ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+			return ReaderStatus.SUCESS;
+			
 		} else if(object.has(MessageType.PLAYER_SEND_TO_SERVER.getKey())) {
 			
 			JSONObject obj = object.getJSONObject(MessageType.PLAYER_SEND_TO_SERVER.getKey());
@@ -186,6 +208,9 @@ public class MessageReader implements Reader {
 		PLAYER_SEND_TO_GAME("PSTG"),
 		PLAYER_SEND_MESSAGE("PSMSG"),
 		PLAYER_SEND_TEXTUREPACK("PSTP"),
+		
+		PLAYER_LOGIN_EVALUATE("PLE"),
+		PLAYER_LOGIN_SUCESS("PLS"),
 		
 		PLAYER_SEND_KICK("PSKICK"),
 		PLAYER_SEND_BAN("PSBAN"),
