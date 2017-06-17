@@ -2,6 +2,7 @@ package net.omniblock.core.protocol.manager.network.types;
 
 public enum ServerType {
 
+	MAIN_AUTH_SERVER("AUTH", false),
 	MAIN_LOBBY_SERVER("LOBBY", false),
 	
 	SURVIVAL("SURVIVAL", false),
