@@ -6,6 +6,8 @@ import net.omniblock.core.protocol.manager.xml.XMLHandler;
 
 public enum XMLType {
 
+	FRIENDLY_NAMES("friendlynames.xml"),
+	WEEKPRIZE("weekprize.xml"),
 	PLUGINS_VERSIONS("versions.xml"),
 	PERMISSIONS("permissions.xml"),
 	

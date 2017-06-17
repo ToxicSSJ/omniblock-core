@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<FriendlyNames>
+    <Name>
+        <ID>kills</ID>
+        <Alias>Más Asesinatos</Alias>
+    </Name>
+    <Name>
+        <ID>deaths</ID>
+        <Alias>Más Muertes</Alias>
+    </Name>
+    <Name>
+        <ID>wins</ID>
+        <Alias>Más Victorias</Alias>
+    </Name>
+    <Name>
+        <ID>assists</ID>
+        <Alias>Más Asistencias</Alias>
+    </Name>
+</FriendlyNames>
