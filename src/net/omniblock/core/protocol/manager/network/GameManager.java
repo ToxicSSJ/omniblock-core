@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import net.omniblock.core.protocol.manager.network.handler.cord.ProxyServer;
 import net.omniblock.core.protocol.manager.network.handler.modifier.PacketModifier;
 import net.omniblock.core.protocol.manager.network.object.GameStructure;
-import net.omniblock.core.protocol.manager.network.reader.MessageReader.MessageType;
+import net.omniblock.core.protocol.manager.network.reader.type.MessageType;
 import net.omniblock.core.protocol.manager.network.types.GameAttribute;
 import net.omniblock.core.protocol.manager.network.types.GamePreset;
 import net.omniblock.core.protocol.manager.network.types.GameStat;

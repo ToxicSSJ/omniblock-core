@@ -7,7 +7,7 @@ import net.omniblock.core.protocol.manager.network.GameManager;
 import net.omniblock.core.protocol.manager.network.NetworkManager;
 import net.omniblock.core.protocol.manager.network.handler.cord.ProxyServer;
 import net.omniblock.core.protocol.manager.network.handler.modifier.PacketModifier;
-import net.omniblock.core.protocol.manager.network.reader.MessageReader.MessageType;
+import net.omniblock.core.protocol.manager.network.reader.type.MessageType;
 import net.omniblock.lib.socket.ServerSocketAdapter.DataSenderStatus;
 
 /**
