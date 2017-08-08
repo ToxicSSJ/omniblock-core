@@ -10,13 +10,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import net.omniblock.core.protocol.manager.network.handler.cord.ProxyServer;
-import net.omniblock.core.protocol.manager.network.handler.modifier.PacketModifier;
 import net.omniblock.core.protocol.manager.network.object.GameStructure;
 import net.omniblock.core.protocol.manager.network.object.ServerStructure;
-import net.omniblock.core.protocol.manager.network.reader.type.MessageType;
-import net.omniblock.core.protocol.manager.network.types.GamePreset;
-import net.omniblock.core.protocol.manager.network.types.ServerType;
+import net.omniblock.packets.network.Packets;
+import net.omniblock.packets.network.socket.helper.SocketHelper;
+import net.omniblock.packets.network.structure.packet.PlayerSendMessagePacket;
+import net.omniblock.packets.network.structure.packet.PlayerSendToNamedServerPacket;
+import net.omniblock.packets.network.structure.packet.ServerReloadInfoPacket;
+import net.omniblock.packets.network.structure.type.PacketSenderType;
+import net.omniblock.packets.object.external.GamePreset;
+import net.omniblock.packets.object.external.ServerType;
 
 public class NetworkManager {
 
@@ -50,7 +53,7 @@ public class NetworkManager {
 	            		
 	            		if(next.getValue() != null) {
 	            			
-	            			if(!ProxyServer.getSocketAdapter().isLocalPortInUse(
+	            			if(!SocketHelper.isLocalPortInUse(
 	            					NetworkManager.NETWORK_SERVERS.get(next.getValue().getServerName()).getServerPort())) {
 	            				
 	            				GameStructure game = null;
@@ -111,12 +114,12 @@ public class NetworkManager {
 			entry.getValue().getServerType() == st).forEach(entry ->
 					{
 						
-						PacketModifier modifier = new PacketModifier()
-								.addString(MessageType.SERVER_RELOAD_INFO.getKey())
-								.addString(entry.getKey())
-								.addInteger(entry.getValue().getSocketPort());
-						
-						ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+						Packets.STREAMER.streamPacket(new ServerReloadInfoPacket()
+								
+								.setServername(entry.getKey())
+								.setSocketport(entry.getValue().getSocketPort())
+								
+								.build().setReceiver(PacketSenderType.OMNICORD));
 						
 					}
 			);
@@ -153,12 +156,13 @@ public class NetworkManager {
 			
 			NETWORK_SERVERS.put(serverstructure.getServerName(), serverstructure);
 			
-			PacketModifier modifier = new PacketModifier()
-					.addString(MessageType.SERVER_SOCKET_INFO.getKey())
-					.addString(serverstructure.getServerName())
-					.addInteger(serverstructure.getSocketPort());
+			Packets.STREAMER.streamPacket(new ServerReloadInfoPacket()
+					
+					.setServername(serverstructure.getServerName())
+					.setSocketport(serverstructure.getSocketPort())
+					
+					.build().setReceiver(PacketSenderType.OMNICORD));
 			
-			ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
 			return InjectorStatus.SUCESS;
 			
 		}
@@ -208,23 +212,23 @@ public class NetworkManager {
 		
 		if(search == null) {
 			
-			PacketModifier modifier = new PacketModifier()
-					.addString(MessageType.PLAYER_SEND_MESSAGE.getKey())
-					.addString(name)
-					.addString("&cEl servidor al que estas intentando entrar está lleno o esta desactivado.");
-			
-			ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+			Packets.STREAMER.streamPacket(new PlayerSendMessagePacket()
+					
+					.setPlayername(name)
+					.setMessage("&cEl servidor al que estas intentando entrar está lleno o esta desactivado.")
+					
+					.build().setReceiver(PacketSenderType.OMNICORD));
 			return;
 			
 		}
 		
-		PacketModifier modifier = new PacketModifier()
-				.addString(MessageType.PLAYER_SEND_TO_SERVER.getKey())
-				.addString(name)
-				.addString(search.getValue().getServerName())
-				.addBoolean(false);
-		
-		ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+		Packets.STREAMER.streamPacket(new PlayerSendToNamedServerPacket()
+				
+				.setPlayername(name)
+				.setServername(search.getValue().getServerName())
+				.setParty(false)
+				
+				.build().setReceiver(PacketSenderType.OMNICORD));
 		return;
 		
 	}
@@ -238,26 +242,26 @@ public class NetworkManager {
 		
 		if(search == null) {
 			
-			PacketModifier modifier = new PacketModifier()
-					.addString(MessageType.PLAYER_SEND_MESSAGE.getKey())
-					.addString(name)
-					.addString("[center]&cNo hay servidores disponibles :([/center][br]"
+			Packets.STREAMER.streamPacket(new PlayerSendMessagePacket()
+					
+					.setPlayername(name)
+					.setMessage("[center]&cNo hay servidores disponibles :([/center][br]"
 							 + "&8&m-&r &7Este mensaje quiere decir que nuestros fondos no son suficientes para cubrir tantos usuarios. De parte "
 							 + "de todo el equipo agradecemos cualquier donación por nuestra tienda oficial, La cual usaremos para mejorar nuestros "
-							 + "sistemas y podrás recibir grandes cosas a cambio! Gracias por jugar en OmniNetwork!");
-			
-			ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+							 + "sistemas y podrás recibir grandes cosas a cambio! Gracias por jugar en OmniNetwork!")
+					
+					.build().setReceiver(PacketSenderType.OMNICORD));
 			return;
 			
 		}
 		
-		PacketModifier modifier = new PacketModifier()
-				.addString(MessageType.PLAYER_SEND_TO_SERVER.getKey())
-				.addString(name)
-				.addString(search.getValue().getServerName())
-				.addBoolean(false);
-		
-		ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+		Packets.STREAMER.streamPacket(new PlayerSendToNamedServerPacket()
+				
+				.setPlayername(name)
+				.setServername(search.getValue().getServerName())
+				.setParty(false)
+				
+				.build().setReceiver(PacketSenderType.OMNICORD));
 		return;
 		
 	}

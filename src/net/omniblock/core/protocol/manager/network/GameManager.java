@@ -8,13 +8,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import net.omniblock.core.protocol.manager.network.handler.cord.ProxyServer;
-import net.omniblock.core.protocol.manager.network.handler.modifier.PacketModifier;
 import net.omniblock.core.protocol.manager.network.object.GameStructure;
-import net.omniblock.core.protocol.manager.network.reader.type.MessageType;
 import net.omniblock.core.protocol.manager.network.types.GameAttribute;
-import net.omniblock.core.protocol.manager.network.types.GamePreset;
 import net.omniblock.core.protocol.manager.network.types.GameStat;
+import net.omniblock.packets.network.Packets;
+import net.omniblock.packets.network.structure.packet.GameInitializerInfoPacket;
+import net.omniblock.packets.network.structure.packet.PlayerSendMessagePacket;
+import net.omniblock.packets.network.structure.packet.PlayerSendToNamedServerPacket;
+import net.omniblock.packets.network.structure.type.PacketSenderType;
+import net.omniblock.packets.object.external.GamePreset;
 
 public class GameManager {
 
@@ -142,28 +144,27 @@ public class GameManager {
 			
 			if(structure == null) {
 				
-				PacketModifier modifier = new PacketModifier()
-						.addString(MessageType.PLAYER_SEND_MESSAGE.getKey())
-						.addString(name)
-						.addString("[center]&cNo hay servidores disponibles :([/center][br]"
+				Packets.STREAMER.streamPacket(new PlayerSendMessagePacket()
+						
+						.setPlayername(name)
+						.setMessage("[center]&cNo hay servidores disponibles :([/center][br]"
 								 + "&8&m-&r &7En OmniNetwork contamos con más de &a20&7 servidores por cada una de nuestras modalidades, este mensaje quiere decir "
 								 + "que nuestros fondos no son suficientes para cubrir tantos usuarios. De parte de todo el equipo agradecemos cualquier "
 								 + "donación por nuestra tienda oficial, La cual usaremos para mejorar nuestros sistemas y podrás recibir grandes "
 								 + "cosas a cambio! Gracias por jugar en OmniNetwork!")
-						.addBoolean(party);
-				
-				ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+						
+						.build().setReceiver(PacketSenderType.OMNICORD));
 				return;
 				
 			}
 			
-			PacketModifier modifier = new PacketModifier()
-					.addString(MessageType.PLAYER_SEND_TO_SERVER.getKey())
-					.addString(name)
-					.addString(structure.getServerName())
-					.addBoolean(party);
-			
-			ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+			Packets.STREAMER.streamPacket(new PlayerSendToNamedServerPacket()
+					
+					.setPlayername(name)
+					.setServername(structure.getServerName())
+					.setParty(party)
+					
+					.build().setReceiver(PacketSenderType.OMNICORD));
 			return;
 			
 		} else {
@@ -177,39 +178,38 @@ public class GameManager {
 				
 				if(structure == null) {
 					
-					PacketModifier modifier = new PacketModifier()
-							.addString(MessageType.PLAYER_SEND_MESSAGE.getKey())
-							.addString(name)
-							.addString("[center]&cNo hay servidores disponibles :([/center][br]"
+					Packets.STREAMER.streamPacket(new PlayerSendMessagePacket()
+							
+							.setPlayername(name)
+							.setMessage("[center]&cNo hay servidores disponibles :([/center][br]"
 									 + "&8&m-&r &7En OmniNetwork contamos con más de &a20&7 servidores por cada una de nuestras modalidades, este mensaje quiere decir "
 									 + "que nuestros fondos no son suficientes para cubrir tantos usuarios. De parte de todo el equipo agradecemos cualquier "
 									 + "donación por nuestra tienda oficial, La cual usaremos para mejorar nuestros sistemas y podrás recibir grandes "
 									 + "cosas a cambio! Gracias por jugar en OmniNetwork!")
-							.addBoolean(party);
-					
-					ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+							
+							.build().setReceiver(PacketSenderType.OMNICORD));
 					return;
 					
 				}
 				
-				PacketModifier modifier = new PacketModifier()
-						.addString(MessageType.PLAYER_SEND_TO_SERVER.getKey())
-						.addString(name)
-						.addString(structure.getServerName())
-						.addBoolean(party);
-				
-				ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+				Packets.STREAMER.streamPacket(new PlayerSendToNamedServerPacket()
+						
+						.setPlayername(name)
+						.setServername(structure.getServerName())
+						.setParty(party)
+						
+						.build().setReceiver(PacketSenderType.OMNICORD));
 				return;
 				
 			}
 			
-			PacketModifier modifier = new PacketModifier()
-					.addString(MessageType.PLAYER_SEND_TO_SERVER.getKey())
-					.addString(name)
-					.addString(NEXT_GAME_SERVER.get(preset).getServerName())
-					.addBoolean(party);
-			
-			ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
+			Packets.STREAMER.streamPacket(new PlayerSendToNamedServerPacket()
+					
+					.setPlayername(name)
+					.setServername(NEXT_GAME_SERVER.get(preset).getServerName())
+					.setParty(party)
+					
+					.build().setReceiver(PacketSenderType.OMNICORD));
 			return;
 			
 		}
@@ -275,18 +275,18 @@ public class GameManager {
 				
 				GameStructure cache = structure;
 				
-				PacketModifier modifier = new PacketModifier()
-						.addString(MessageType.INITIALIZE_GAME.getKey())
-						.addString(structure.getServerName())
-						.addString(preset.toString())
-						.addInteger(NetworkManager.NETWORK_SERVERS.get(structure.getServerName()).getSocketPort());
+				Packets.STREAMER.streamPacket(new GameInitializerInfoPacket()
+						
+						.setServername(structure.getServerName())
+						.setGamepreset(preset)
+						.setSocketport(NetworkManager.NETWORK_SERVERS.get(structure.getServerName()).getSocketPort())
+						
+						.build().setReceiver(PacketSenderType.OMNICORD));
 				
 				cache.setAttribute(GameAttribute.NEXT, true);
 				cache.setStat(GameStat.GAME_PRESET, preset.toString(), String.class);
 				
 				GameManager.NEXT_GAME_SERVER.put(preset, cache);
-				
-				ProxyServer.getSocketAdapter().sendData(ProxyServer.getPort(), modifier);
 				return;
 				
 			}

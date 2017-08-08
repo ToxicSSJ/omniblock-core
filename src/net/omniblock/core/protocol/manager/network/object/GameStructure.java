@@ -4,23 +4,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.omniblock.core.protocol.manager.network.types.GameAttribute;
-import net.omniblock.core.protocol.manager.network.types.GamePreset;
 import net.omniblock.core.protocol.manager.network.types.GameStat;
-import net.omniblock.lib.json.JSONObject;
+import net.omniblock.packets.network.structure.data.PacketStructure;
+import net.omniblock.packets.network.structure.data.PacketStructure.DataType;
+import net.omniblock.packets.object.external.GamePreset;
 
 /**
  * 
  * Clase que será el constructor de la estructura de un juego
- * la cual es leida por medio JSON.
+ * la cual es leida por medio de un PacketStructure.
  * 
  * @author zlToxicNetherlz
  *
  */
 public class GameStructure {
-
-	private int PACKET_ID = -1;
 	
-	protected JSONObject information;
+	protected PacketStructure structure;
 	protected GameStructureHandler gamestructurehandler;
 	
 	protected Map<GameAttribute, Boolean> attributes = new HashMap<GameAttribute, Boolean>();
@@ -29,21 +28,21 @@ public class GameStructure {
 	/**
 	 * 
 	 * Constructor de la clase, En este constructor se inicializa el handler que a su vez
-	 * se encarga de leer todas las etiquetas en el JSON de información impartido como un
+	 * se encarga de leer todas las etiquetas en el PacketStructure de información impartido como un
 	 * parametro, Luego de ser leidas las etiquetas son pegadas en 2 mapas y pueden ser
-	 * obtenidos los valores por separado por medio de los metodos que se encuentrane en
+	 * obtenidos los valores por separado por medio de los metodos que se encuentran en
 	 * la clase.
 	 * 
-	 * @param information JSON con las etiquetas que leerá el handler.
+	 * @param structure PacketStructure con las etiquetas que leerá el handler.
 	 * @param packetid Identidad del paquete (se usa para identificar la entrada de la estructura).
 	 */
-	public GameStructure(JSONObject information, int packetid) {
+	public GameStructure(PacketStructure structure) {
 		
-		if(information == null) {
-			throw new NullPointerException("La información del paquete #" + packetid + " no contiene ningun valor para ser leido.");
+		if(structure == null) {
+			throw new NullPointerException("La información del paquete no contiene ningun valor para ser leido.");
 		}
 		
-		gamestructurehandler = new GameStructureHandler(information);
+		gamestructurehandler = new GameStructureHandler(structure);
 		
 		attributes = gamestructurehandler.getAttributes();
 		stats = gamestructurehandler.getStats();
@@ -209,17 +208,6 @@ public class GameStructure {
 	
 	/**
 	 * 
-	 * Devuelve la identidad del paquete que se inserto
-	 * en la estructura.
-	 * 
-	 * @return La identidad del paquete insertada en la estructura.
-	 */
-	public int getPacketID() {
-		return PACKET_ID;
-	}
-	
-	/**
-	 * 
 	 * Cambia de valor cualquier atributo.
 	 * 
 	 * @param attribute El atributo al cual le cambiarás el valor.
@@ -235,6 +223,7 @@ public class GameStructure {
 	 * 
 	 * @param stat El stat al cual le cambiarás el valor.
 	 * @param value El valor que se le dará al atributo.
+	 * @param clazz El tipo de clase primitiva asignable al Stat.
 	 */
 	public void setStat(GameStat stat, Object value, Class<?> clazz) {
 		stats.put(stat, stat.getClazz().isAssignableFrom(clazz) ? value : null);
@@ -242,7 +231,7 @@ public class GameStructure {
 	
 	/**
 	 * 
-	 * Clase tipo Handler que tiene metodos para la redacción del JSON con la información base de
+	 * Clase tipo Handler que tiene metodos para la redacción del PacketStructure con la información base de
 	 * la estructura general de un juego.
 	 * 
 	 * @author zlToxicNetherlz
@@ -250,15 +239,15 @@ public class GameStructure {
 	 */
 	public static class GameStructureHandler {
 		
-		protected JSONObject object;
+		protected PacketStructure object;
 		
 		/**
 		 * 
 		 * Constructor principal de la clase.
 		 * 
-		 * @param object JSON con la información de la estructura del juego.
+		 * @param object PacketStructure con la información de la estructura del juego.
 		 */
-		public GameStructureHandler(JSONObject object) {
+		public GameStructureHandler(PacketStructure object) {
 			
 			this.object = object;
 			
@@ -266,7 +255,7 @@ public class GameStructure {
 
 		/**
 		 * 
-		 * Genera un mapa con todos los stats encontrados en el JSON
+		 * Genera un mapa con todos los stats encontrados en el PacketStructure
 		 * con los siguientes argumentos:
 		 * <br> </br>
 		 * <code> KEY = GameStat.class | Value = Object.class </code>
@@ -277,49 +266,13 @@ public class GameStructure {
 			
 			Map<GameStat, Object> stats = new HashMap<GameStat, Object>();
 			
-			if(object.has("stats")) {
-				
-				JSONObject json_stats = (JSONObject) object.get("stats");
-				
-				for(GameStat stat : GameStat.values()) {
-					
-					if(json_stats.has(stat.getStatkey())) {
-						
-						if(stat.getClazz().isAssignableFrom(String.class)) {
-							
-							String value = json_stats.getString(stat.getStatkey());
-							stats.put(stat, value);
-							
-						} else if(stat.getClazz().isAssignableFrom(Integer.class)) {
-							
-							Integer value = json_stats.getInt(stat.getStatkey());
-							stats.put(stat, value);
-							
-						}
-						
-					}
-					
-				}
-	            
-			}
-			
 			for(GameStat stat : GameStat.values()) {
 				
-				if(!stats.containsKey(stat)) {
-					
-					if(stat.getClass().isAssignableFrom(String.class)) {
-						
-						String value = "notvalue";
-						stats.put(stat, value);
-						
-					} else if(stat.getClass().isAssignableFrom(Integer.class)) {
-						
-						Integer value = 0;
-						stats.put(stat, value);
-						
-					}
-					
-				}
+				stats.put(stat, object.get(
+						stats.getClass().isAssignableFrom(String.class) ?
+							DataType.STRINGS :
+							DataType.INTEGERS,
+							stat.getStatkey()));
 				
 			}
 			
@@ -328,7 +281,7 @@ public class GameStructure {
 		
 		/**
 		 * 
-		 * Genera un mapa con todos los atributos encontrados en el JSON
+		 * Genera un mapa con todos los atributos encontrados en el PacketStructure
 		 * con los siguientes argumentos:
 		 * <br> </br>
 		 * <code> KEY = GameAttribute.class | Value = Boolean.class </code>
@@ -339,21 +292,11 @@ public class GameStructure {
 			
 			Map<GameAttribute, Boolean> attributes = new HashMap<GameAttribute, Boolean>();
 			
-			if(object.has("attributes")) {
+			for(GameAttribute attribute : GameAttribute.values()) {
 				
-				JSONObject json_attributes = (JSONObject) object.get("attributes");
+				attributes.put(attribute, object.get(DataType.BOOLEANS, attribute.getAttribute()));
+				continue;
 				
-				for(GameAttribute attribute : GameAttribute.values()) {
-					
-					if(json_attributes.has(attribute.getAttribute())) {
-						attributes.put(attribute, json_attributes.getBoolean(attribute.getAttribute()));
-						continue;
-					}
-					
-					attributes.put(attribute, false);
-					
-				}
-	            
 			}
 			
 			return attributes;
@@ -364,9 +307,9 @@ public class GameStructure {
 		 * 
 		 * Metodo que devolverá la información de la estructura del juego.
 		 * 
-		 * @return JSON de la información de la estructura del juego.
+		 * @return PacketStructure con la información de la estructura del juego.
 		 */
-		protected JSONObject getObject() {
+		protected PacketStructure getObject() {
 			return object;
 		}
 		

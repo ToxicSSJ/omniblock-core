@@ -1,8 +1,7 @@
 package net.omniblock.core.protocol.console;
 
 import net.omniblock.core.protocol.manager.network.NetworkManager;
-import net.omniblock.core.protocol.manager.network.handler.PacketHandler;
-import net.omniblock.core.protocol.manager.network.types.ServerType;
+import net.omniblock.packets.object.external.ServerType;
 
 public class CommandCatcher {
 
@@ -15,31 +14,7 @@ public class CommandCatcher {
 	
 	public static boolean catchCommand(String command, String[] args) {
 		
-		if(command.equalsIgnoreCase("packets_status")) {
-			
-			if(args.length >= 1) {
-				
-				if(args[0].equalsIgnoreCase("good")) {
-					
-					Console.WRITTER.printLine("Se han recibido y procesado &a" + PacketHandler.SUCESSFULLY_HANDLED_PACKETS + "&r paquetes correctamente!");
-					return true;
-					
-				} else if(args[0].equalsIgnoreCase("bad")) {
-					
-					Console.WRITTER.printLine("Se han recibido y procesado &c" + PacketHandler.ERROR_HANDLED_PACKETS + "&r paquetes erroneos!");
-					return true;
-					
-				}
-				
-				Console.WRITTER.printError(NOT_RECOGNIZED_ARGUMENT.replaceFirst("%s", args[0]).replaceFirst("%s", command));
-				return true;
-				
-			}
-			
-			Console.WRITTER.printError(NOT_ENOUGHT_ARGUMENTS.replaceFirst("%s", command));
-			return true;
-			
-		} else if(command.equalsIgnoreCase("reload")) {
+		if(command.equalsIgnoreCase("reload")) {
 			
 			if(args.length >= 1) {
 				
