@@ -5,10 +5,14 @@ import java.util.concurrent.TimeUnit;
 import net.omniblock.core.protocol.console.Console;
 import net.omniblock.core.protocol.manager.network.GameManager;
 import net.omniblock.core.protocol.manager.network.NetworkManager;
+import net.omniblock.core.protocol.manager.network.packets.PacketsAdapter;
+import net.omniblock.packets.OmniPackets;
 import net.omniblock.packets.network.Packets;
+import net.omniblock.packets.network.socket.Sockets;
 import net.omniblock.packets.network.socket.helper.SocketHelper;
 import net.omniblock.packets.network.structure.packet.WelcomeProxyPacket;
 import net.omniblock.packets.network.structure.type.PacketSenderType;
+import net.omniblock.packets.object.external.SystemType;
 
 /**
  * 
@@ -37,6 +41,11 @@ public class OmniCore {
 			Console.WRITTER.printInfo("Verificando la connexión con el proxy...");
 			
 			if(SocketHelper.isLocalPortInUse(25565)) {
+				
+				OmniPackets.setupSystem(SystemType.OMNICORE);
+				PacketsAdapter.registerReaders();
+				
+				Sockets.SERVER.startServer(SocketHelper.OMNICORE_SOCKET_PORT);
 				
 				Packets.STREAMER.streamPacket(new WelcomeProxyPacket()
 						.build().setReceiver(PacketSenderType.OMNICORD));

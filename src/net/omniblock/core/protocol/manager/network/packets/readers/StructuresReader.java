@@ -13,7 +13,7 @@ import net.omniblock.packets.network.tool.object.PacketReader;
 
 public class StructuresReader {
 
-	static {
+	public static void start() {
 	
 		/*
 		 * 

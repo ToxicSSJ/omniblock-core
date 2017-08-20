@@ -15,7 +15,7 @@ import net.omniblock.packets.object.external.ServerType;
 
 public class PlayersReader {
 
-	static {
+	public static void start() {
 		
 		/*
 		 * 

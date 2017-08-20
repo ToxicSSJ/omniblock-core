@@ -10,7 +10,7 @@ import net.omniblock.packets.network.tool.object.PacketReader;
 
 public class GamesReader {
 
-	static {
+	public static void start() {
 		
 		/*
 		 * 
