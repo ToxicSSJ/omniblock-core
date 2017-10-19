@@ -274,11 +274,7 @@ public class ServerStructure {
 			
 			for(ServerStat stat : ServerStat.values()) {
 				
-				stats.put(stat, object.get(
-						stats.getClass().isAssignableFrom(String.class) ?
-							DataType.STRINGS :
-							DataType.INTEGERS,
-							stat.getStatkey()));
+				stats.put(stat, object.get(stat.getDatatype(), stat.getStatkey()));
 				continue;
 				
 			}

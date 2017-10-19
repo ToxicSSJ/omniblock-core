@@ -1,29 +1,15 @@
-package net.omniblock.core.protocol.console;
+package net.omniblock.core.protocol.console.cmds;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import net.omniblock.core.protocol.console.Console;
+import net.omniblock.core.protocol.console.CommandCatcher;
+import net.omniblock.core.protocol.console.CommandCatcher.Command;
 import net.omniblock.core.protocol.manager.network.NetworkManager;
 import net.omniblock.packets.object.external.ServerType;
 
-public class CommandCatcher {
+public class ReloadCommand implements Command {
 
-	public static final String NOT_RECOGNIZED_COMMAND = "El comando '%s' no ha sido reconocido por el sistema!";
-	
-	public static final String NOT_ENOUGHT_ARGUMENTS = "No hay suficientes argumentos para el comando '%s' por favor rectifique la sintaxis!";
-	public static final String NOT_RECOGNIZED_ARGUMENT = "No se ha reconocido el argumento '%s' en el comando '%s' por favor rectifique la sintaxis!";
-	
-	public static List<Command> COMMANDS = new ArrayList<Command>();
-	
-	public CommandCatcher() { }
-	
-	public static void addCommand(Command command){
-		
-		
-		
-	}
-	
-	public static boolean catchCommand(String command, String[] args) {
+	@Override
+	public boolean execute(String command, String[] args) {
 		
 		if(command.equalsIgnoreCase("reload")) {
 			
@@ -66,12 +52,12 @@ public class CommandCatcher {
 				
 				if(args[0].equalsIgnoreCase("skywars")){
 					
-					Console.WRITTER.printError(NOT_ENOUGHT_ARGUMENTS.replaceFirst("%s", command));
+					Console.WRITTER.printError(CommandCatcher.NOT_ENOUGHT_ARGUMENTS.replaceFirst("%s", command));
 					return true;
 					
 				}
 				
-				Console.WRITTER.printError(NOT_RECOGNIZED_ARGUMENT.replaceFirst("%s", args[0]).replaceFirst("%s", command));
+				Console.WRITTER.printError(CommandCatcher.NOT_RECOGNIZED_ARGUMENT.replaceFirst("%s", args[0]).replaceFirst("%s", command));
 				return true;
 				
 			}
@@ -102,62 +88,23 @@ public class CommandCatcher {
 						
 					}
 					
-					Console.WRITTER.printError(NOT_RECOGNIZED_ARGUMENT.replaceFirst("%s", args[1]).replaceFirst("%s", command));
+					Console.WRITTER.printError(CommandCatcher.NOT_RECOGNIZED_ARGUMENT.replaceFirst("%s", args[1]).replaceFirst("%s", command));
 					return true;
 					
 				}
 				
-				Console.WRITTER.printError(NOT_RECOGNIZED_ARGUMENT.replaceFirst("%s", args[1]).replaceFirst("%s", command));
+				Console.WRITTER.printError(CommandCatcher.NOT_RECOGNIZED_ARGUMENT.replaceFirst("%s", args[1]).replaceFirst("%s", command));
 				return true;
 				
 			}
 			
-			Console.WRITTER.printError(NOT_ENOUGHT_ARGUMENTS.replaceFirst("%s", command));
-			return true;
-			
-		} else if(command.equalsIgnoreCase("shop")) {
-			
-			return true;
-			
-		} else if(command.equalsIgnoreCase("stop")) {
-			
-			Console.WRITTER.printInfo("Adios! :)");
-			System.exit(0);
+			Console.WRITTER.printError(CommandCatcher.NOT_ENOUGHT_ARGUMENTS.replaceFirst("%s", command));
 			return true;
 			
 		}
 		
 		return false;
-		
-	}
-	
-	/**
-	 * 
-	 * Clase general encargada de tener instancias
-	 * para el manejo de comandos del sistema.
-	 * 
-	 * @author zlToxicNetherlz
-	 *
-	 */
-	public interface Command {
-		
-		/**
-		 * 
-		 * Este metodo será ejecutado una vez un comando
-		 * que aún no ha sido identificado pase por el
-		 * lector como proceso general. Si este metodo
-		 * devuelve true, el lector parará y no se seguirá
-		 * tratando de identificar el manager de dicho
-		 * comando. Caso contrario el lector seguirá con
-		 * las demas instancias de comandos.
-		 * 
-		 * @param cmd El comando en su formato habitual.
-		 * @param args Los argumentos extras del comando.
-		 * @return <strong>true</strong> si el procesador
-		 * del comando fue identificado.
-		 */
-		public boolean execute(String command, String[] args);
-		
+
 	}
 	
 }

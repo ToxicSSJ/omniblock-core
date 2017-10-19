@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import net.omniblock.core.protocol.console.Console;
 import net.omniblock.core.protocol.manager.network.object.GameStructure;
 import net.omniblock.core.protocol.manager.network.types.GameAttribute;
 import net.omniblock.core.protocol.manager.network.types.GameStat;
@@ -54,6 +55,7 @@ public class GameManager {
                 			
                 			Entry<String, GameStructure> search = NetworkManager.NETWORK_GAMES.entrySet().stream()
                 					.filter(entry -> entry.getValue().getGamePreset() == next.getKey())
+                					.filter(entry -> !entry.getValue().isFull())
                 					.filter(entry -> !entry.getValue().isLocked())
                 					.filter(entry -> !entry.getValue().isNext())
                 					.filter(entry -> !entry.getValue().isStarted())
@@ -218,18 +220,41 @@ public class GameManager {
 	
 	public static GameStructure startNewGame(GamePreset preset) {
 		
-		for(Map.Entry<String, GameStructure> entry : NetworkManager.NETWORK_GAMES.entrySet()) {
-			if(NEXT_GAME_SERVER.get(preset) == null) {
-				if(entry.getValue().getGamePreset().getServertype() == preset.getServertype()) {
-					if(!entry.getValue().isLocked() && !entry.getValue().isStarted()) {
-						initializeGame(entry.getValue(), preset);
-						return entry.getValue();
-					}
-				}
+		if(NEXT_GAME_SERVER.get(preset) == null) {
+			
+			GameStructure search = NetworkManager.NETWORK_GAMES.values().stream()
+					.filter(entry -> entry.getGamePreset().getServertype() == preset.getServertype())
+					.filter(entry -> !entry.isLocked() && !entry.isStarted())
+					.filter(entry -> !entry.getGamePreset().isMask())
+					.filter(entry -> entry.getGamePreset() == preset)
+					.findAny().orElse(null);
+			
+			if(search == null){
+				
+				search = NetworkManager.NETWORK_GAMES.values().stream()
+						.filter(entry -> entry.getGamePreset().getServertype() == preset.getServertype())
+						.filter(entry -> !entry.isLocked() && !entry.isStarted())
+						.filter(entry -> entry.getGamePreset().isMask())
+						.findAny().orElse(null);
+				
 			}
+			
+			initializeGame(search, preset);
+			return search;
+			
 		}
 		
-		return null;
+		return NEXT_GAME_SERVER.get(preset);
+		
+	}
+	
+	public static void setGameOpened(String servername, boolean opened) {
+		
+		if(NetworkManager.NETWORK_GAMES.containsKey(servername)) {
+			NetworkManager.NETWORK_GAMES.get(servername).setAttribute(GameAttribute.LOCKED, !opened);
+		}
+		
+		return;
 		
 	}
 	
@@ -257,10 +282,9 @@ public class GameManager {
 		
 		if(NetworkManager.NETWORK_GAMES.containsKey(servername)) {
 			
-			NetworkManager.NETWORK_GAMES.get(servername).setStat(GameStat.MAP_NAME, mapname, String.class);
-			
-			NetworkManager.NETWORK_GAMES.get(servername).setStat(GameStat.ONLINE_PLAYERS, online, Integer.class);
-			NetworkManager.NETWORK_GAMES.get(servername).setStat(GameStat.MAXIMIUM_PLAYERS, max, Integer.class);
+			NetworkManager.NETWORK_GAMES.get(servername).setStat(GameStat.MAP_NAME, mapname);
+			NetworkManager.NETWORK_GAMES.get(servername).setStat(GameStat.MAXIMIUM_PLAYERS, max);
+			NetworkManager.NETWORK_GAMES.get(servername).setStat(GameStat.ONLINE_PLAYERS, online);
 			
 		}
 		
@@ -270,21 +294,26 @@ public class GameManager {
 	
 	private static void initializeGame(GameStructure structure, GamePreset preset) {
 		
+		if(structure == null) return;
+		
 		if(!structure.isLocked() && !structure.isStarted()) {
 			if(structure.getGamePreset().getServertype() == preset.getServertype()) {
+				
+				Console.WRITTER.printInfo("Se inicializará la estructura " + structure.getServerName() + " con la preset " + preset.name());
 				
 				GameStructure cache = structure;
 				
 				Packets.STREAMER.streamPacket(new GameInitializerInfoPacket()
 						
+						.setData("")
 						.setServername(structure.getServerName())
 						.setGamepreset(preset)
 						.setSocketport(NetworkManager.NETWORK_SERVERS.get(structure.getServerName()).getSocketPort())
 						
-						.build().setReceiver(PacketSenderType.OMNICORD));
+						.build().setReceiver(NetworkManager.NETWORK_SERVERS.get(structure.getServerName()).getSocketPort()));
 				
 				cache.setAttribute(GameAttribute.NEXT, true);
-				cache.setStat(GameStat.GAME_PRESET, preset.toString(), String.class);
+				cache.setStat(GameStat.GAME_PRESET, preset.toString());
 				
 				GameManager.NEXT_GAME_SERVER.put(preset, cache);
 				return;

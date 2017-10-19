@@ -109,20 +109,6 @@ public class GameStructure {
 	
 	/**
 	 * 
-	 * Se usa para recibir la información del Stat denominado ONLINE_PLAYERS.
-	 * 
-	 * @return El numero de jugadores que están en el juego.
-	 */
-	public int getOnlinePlayers() {
-		if(stats.containsKey(GameStat.ONLINE_PLAYERS)) {
-			return (int) stats.get(GameStat.ONLINE_PLAYERS);
-		}
-		
-		return 0;
-	}
-	
-	/**
-	 * 
 	 * Se usa para recibir la información del Stat denominado MAXIMIUM_PLAYERS.
 	 * 
 	 * @return El numero maximo de jugadores que pueden entrar al juego.
@@ -180,6 +166,20 @@ public class GameStructure {
 	
 	/**
 	 * 
+	 * Se usa para saber si la estructura no acepta mas jugadores.
+	 * 
+	 * @return true si el juego es incapaz de aceptar mas jugadores.
+	 */
+	public boolean isFull() {
+		if(stats.containsKey(GameStat.ONLINE_PLAYERS)) {
+			return ((int) stats.get(GameStat.ONLINE_PLAYERS)) < ((int) stats.get(GameStat.MAXIMIUM_PLAYERS));
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * 
 	 * Se usa para recibir la información del Stat denominado RELOAD.
 	 * 
 	 * @return true si el juego se encuentra en el estado reload (reseteo).
@@ -225,8 +225,8 @@ public class GameStructure {
 	 * @param value El valor que se le dará al atributo.
 	 * @param clazz El tipo de clase primitiva asignable al Stat.
 	 */
-	public void setStat(GameStat stat, Object value, Class<?> clazz) {
-		stats.put(stat, stat.getClazz().isAssignableFrom(clazz) ? value : null);
+	public void setStat(GameStat stat, Object value) {
+		stats.put(stat, value);
 	}
 	
 	/**
@@ -268,11 +268,8 @@ public class GameStructure {
 			
 			for(GameStat stat : GameStat.values()) {
 				
-				stats.put(stat, object.get(
-						stats.getClass().isAssignableFrom(String.class) ?
-							DataType.STRINGS :
-							DataType.INTEGERS,
-							stat.getStatkey()));
+				stats.put(stat, object.get(stat.getDatatype(), stat.getStatkey()));
+				continue;
 				
 			}
 			

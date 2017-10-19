@@ -6,15 +6,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.ResourceBundle;
+
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 
 public abstract interface Config {
 
 	public Config create(String filename) throws URISyntaxException, MalformedURLException;
 	
-	public ResourceBundle getResource();
+	public FileBasedConfigurationBuilder<FileBasedConfiguration> getBuilder();
 	
-	public String getData(String key);
+	public Configuration getConfiguration();
 	
 	public static void copyFile(InputStream in , File file) {
 		

@@ -14,9 +14,15 @@ import net.omniblock.core.protocol.manager.network.object.GameStructure;
 import net.omniblock.core.protocol.manager.network.object.ServerStructure;
 import net.omniblock.packets.network.Packets;
 import net.omniblock.packets.network.socket.helper.SocketHelper;
+import net.omniblock.packets.network.structure.data.PacketSocketData;
+import net.omniblock.packets.network.structure.data.PacketStructure;
+import net.omniblock.packets.network.structure.data.PacketStructure.DataType;
 import net.omniblock.packets.network.structure.packet.PlayerSendMessagePacket;
 import net.omniblock.packets.network.structure.packet.PlayerSendToNamedServerPacket;
+import net.omniblock.packets.network.structure.packet.RequestPlayerGameLobbyServersPacket;
+import net.omniblock.packets.network.structure.packet.ResposePlayerGameLobbiesPacket;
 import net.omniblock.packets.network.structure.packet.ServerReloadInfoPacket;
+import net.omniblock.packets.network.structure.packet.ServerSocketInfoPacket;
 import net.omniblock.packets.network.structure.type.PacketSenderType;
 import net.omniblock.packets.object.external.GamePreset;
 import net.omniblock.packets.object.external.ServerType;
@@ -156,10 +162,10 @@ public class NetworkManager {
 			
 			NETWORK_SERVERS.put(serverstructure.getServerName(), serverstructure);
 			
-			Packets.STREAMER.streamPacket(new ServerReloadInfoPacket()
+			Packets.STREAMER.streamPacket(new ServerSocketInfoPacket()
 					
 					.setServername(serverstructure.getServerName())
-					.setSocketport(serverstructure.getSocketPort())
+					.setServersocket(serverstructure.getSocketPort())
 					
 					.build().setReceiver(PacketSenderType.OMNICORD));
 			
@@ -262,7 +268,27 @@ public class NetworkManager {
 				.setParty(false)
 				
 				.build().setReceiver(PacketSenderType.OMNICORD));
+		
 		return;
+		
+	}
+	
+	public static void sendLobbyServers(PacketSocketData<RequestPlayerGameLobbyServersPacket> packetsocketdata){
+		
+		PacketStructure structure = packetsocketdata.getStructure();
+		
+		String playername = structure.get(DataType.STRINGS, "playername");
+		String servername = structure.get(DataType.STRINGS, "servername");
+		
+		String servertype = structure.get(DataType.STRINGS, "servertype");
+		
+		Packets.STREAMER.streamPacket(new ResposePlayerGameLobbiesPacket()
+    			.setPlayername(playername)
+    			.setServers(getLobbyServers(ServerType.valueOf(servertype)))
+    			.build()
+    			
+    			.setPacketUUID(packetsocketdata.getPacketUUID())
+    			.setReceiver(getSocketServer(servername)));
 		
 	}
 	
@@ -284,6 +310,12 @@ public class NetworkManager {
 		});
 		
 		return String.join(",", data);
+		
+	}
+	
+	public static int getSocketServer(String servername){
+		
+		return NETWORK_SERVERS.get(servername).getSocketPort();
 		
 	}
 	

@@ -34,9 +34,9 @@ public class PlayersReader {
 				PacketStructure structure = packetsocketdata.getStructure();
 				
 				String playername = structure.get(DataType.STRINGS, "playername");
-				GamePreset gamepreset = GamePreset.valueOf(structure.get(DataType.STRINGS, "gamepreset"));
+				GamePreset gamepreset = GamePreset.valueOf(structure.get(DataType.STRINGS, "preset"));
 				
-				Boolean party = structure.get(DataType.BOOLEANS, structure.get(DataType.BOOLEANS, "party"));
+				Boolean party = structure.get(DataType.BOOLEANS, "party");
 				
 				GameManager.sendPlayerToGame(playername, party, gamepreset);
 				return;

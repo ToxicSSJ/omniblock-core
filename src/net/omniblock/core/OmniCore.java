@@ -43,6 +43,8 @@ public class OmniCore {
 			if(SocketHelper.isLocalPortInUse(25565)) {
 				
 				OmniPackets.setupSystem(SystemType.OMNICORE);
+				OmniPackets.setDebug(false);
+				
 				PacketsAdapter.registerReaders();
 				
 				Sockets.SERVER.startServer(SocketHelper.OMNICORE_SOCKET_PORT);

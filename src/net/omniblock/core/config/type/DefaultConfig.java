@@ -3,19 +3,26 @@ package net.omniblock.core.config.type;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Locale;
-import java.util.ResourceBundle;
+
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import net.omniblock.core.config.Config;
 
 public class DefaultConfig implements Config {
 
-	protected ResourceBundle bundle;
+	protected Configuration bundle;
+	protected String filename;
 	
 	@Override
 	public DefaultConfig create(String filename) throws URISyntaxException, MalformedURLException {
+		
+		this.filename = filename;
 		
 		File file = new File(Config.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath(), "/config/" + filename);
 		
@@ -23,27 +30,32 @@ public class DefaultConfig implements Config {
 			
 			file.mkdirs();
 			Config.copyFile(ClassLoader.getSystemResourceAsStream("/config/" + filename), file);
-			return this;
 			
 		}
 		
-		URL[] urls = { file.toURI().toURL() };
-		ClassLoader loader = new URLClassLoader(urls);
-		ResourceBundle bundle = ResourceBundle.getBundle(filename, Locale.getDefault(), loader);
+		try { this.bundle = getBuilder().getConfiguration(); } 
+		catch (ConfigurationException e) { e.printStackTrace(); }
 		
-		this.bundle = bundle;
 		return this;
 		
 	}
 	
 	@Override
-	public ResourceBundle getResource() {
-		return bundle;
+	public FileBasedConfigurationBuilder<FileBasedConfiguration> getBuilder(){
+		
+		Parameters params = new Parameters();
+		
+		return new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
+			    .configure(params.properties()
+			    		  .setFileName(filename)
+			    		  .setListDelimiterHandler(new DefaultListDelimiterHandler(',')
+			    		  )
+			   );
 	}
-
+	
 	@Override
-	public String getData(String key) {
-		return bundle.getString(key);
+	public Configuration getConfiguration() {
+		return bundle;
 	}
 
 }

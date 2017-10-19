@@ -1,36 +1,30 @@
 package net.omniblock.core.protocol.manager.network.types;
 
+import net.omniblock.packets.network.structure.data.PacketStructure.DataType;
+
 public enum GameStat {
 	
-	SERVER_NAME("servername", String.class),
-	GAME_PRESET("gamepreset", String.class),
+	SERVER_NAME("servername", DataType.STRINGS),
+	GAME_PRESET("gamepreset", DataType.STRINGS),
 	
-	ONLINE_PLAYERS("onlineplayers", Integer.class),
+	MINIMIUM_PLAYERS("minimiumplayers", DataType.INTEGERS),
+	MAXIMIUM_PLAYERS("maximiumplayers", DataType.INTEGERS),
 	
-	MINIMIUM_PLAYERS("minimiumplayers", Integer.class),
-	MAXIMIUM_PLAYERS("maximiumplayers", Integer.class),
+	ONLINE_PLAYERS("onlineplayers", DataType.INTEGERS),
 	
-	MAP_NAME("mapname", String.class),
-	EXTRA_INFO("extrainfo", String.class),
+	MAP_NAME("mapname", DataType.STRINGS),
+	EXTRA_INFO("extrainfo", DataType.STRINGS),
 	
 	;
 	
 	private String statkey;
-	private Class<?> clazz;
+	private DataType datatype;
 	
-	GameStat(String statkey, Class<?> clazz){
+	GameStat(String statkey, DataType datatype){
 		
 		this.statkey = statkey;
-		this.clazz = clazz;
+		this.setDatatype(datatype);
 		
-	}
-
-	public Class<?> getClazz() {
-		return clazz;
-	}
-
-	public void setClazz(Class<?> clazz) {
-		this.clazz = clazz;
 	}
 
 	public String getStatkey() {
@@ -39,6 +33,14 @@ public enum GameStat {
 
 	public void setStatkey(String statkey) {
 		this.statkey = statkey;
+	}
+
+	public DataType getDatatype() {
+		return datatype;
+	}
+
+	public void setDatatype(DataType datatype) {
+		this.datatype = datatype;
 	}
 	
 }

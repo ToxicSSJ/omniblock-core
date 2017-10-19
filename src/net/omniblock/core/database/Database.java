@@ -23,11 +23,11 @@ public class Database {
 
 	public static boolean makeConnection(){
 		
-		String host = ConfigHandler.DATABASE_CONFIG.getData("host");
-		String port = ConfigHandler.DATABASE_CONFIG.getData("port");
-		String user = ConfigHandler.DATABASE_CONFIG.getData("user");
-		String pass = ConfigHandler.DATABASE_CONFIG.getData("pass");
-		String database = ConfigHandler.DATABASE_CONFIG.getData("database");
+		String host = ConfigHandler.getDatabaseConfig().getConfiguration().getString("host");
+		String port = ConfigHandler.getDatabaseConfig().getConfiguration().getString("port");
+		String user = ConfigHandler.getDatabaseConfig().getConfiguration().getString("user");
+		String pass = ConfigHandler.getDatabaseConfig().getConfiguration().getString("pass");
+		String database = ConfigHandler.getDatabaseConfig().getConfiguration().getString("database");
 		
 		if(host == null) Console.WRITTER.printError("&c[!] &fEl host no pudo ser obtenido (null)");
 		if(port == null) Console.WRITTER.printError("&c[!] &fEl puerto no pudo ser obtenido (null)");

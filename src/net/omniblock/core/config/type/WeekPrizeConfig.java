@@ -14,13 +14,13 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import net.omniblock.core.config.Config;
 
-public class VersionConfig implements Config {
+public class WeekPrizeConfig implements Config {
 
 	protected Configuration bundle;
 	protected String filename;
 	
 	@Override
-	public VersionConfig create(String filename) throws URISyntaxException, MalformedURLException {
+	public WeekPrizeConfig create(String filename) throws URISyntaxException, MalformedURLException {
 		
 		this.filename = filename;
 		
