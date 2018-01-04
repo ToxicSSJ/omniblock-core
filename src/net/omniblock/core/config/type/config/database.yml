@@ -1,0 +1,5 @@
+database: Omnibase
+host: 173.208.136.242
+port: 3306
+user: 'omniuser'
+pass: 'qc0g17lov0'

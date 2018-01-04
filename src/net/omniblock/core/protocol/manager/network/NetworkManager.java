@@ -6,12 +6,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.collect.Lists;
+
+import net.omniblock.core.OmniCore;
+import net.omniblock.core.protocol.console.Console;
 import net.omniblock.core.protocol.manager.network.object.GameStructure;
 import net.omniblock.core.protocol.manager.network.object.ServerStructure;
+import net.omniblock.core.protocol.manager.network.object.handler.GameGetter;
 import net.omniblock.packets.network.Packets;
 import net.omniblock.packets.network.socket.helper.SocketHelper;
 import net.omniblock.packets.network.structure.data.PacketSocketData;
@@ -21,10 +24,9 @@ import net.omniblock.packets.network.structure.packet.PlayerSendMessagePacket;
 import net.omniblock.packets.network.structure.packet.PlayerSendToNamedServerPacket;
 import net.omniblock.packets.network.structure.packet.RequestPlayerGameLobbyServersPacket;
 import net.omniblock.packets.network.structure.packet.ResposePlayerGameLobbiesPacket;
-import net.omniblock.packets.network.structure.packet.ServerReloadInfoPacket;
+import net.omniblock.packets.network.structure.packet.ResposeReloadInfoPacket;
 import net.omniblock.packets.network.structure.packet.ServerSocketInfoPacket;
 import net.omniblock.packets.network.structure.type.PacketSenderType;
-import net.omniblock.packets.object.external.GamePreset;
 import net.omniblock.packets.object.external.ServerType;
 
 public class NetworkManager {
@@ -32,71 +34,74 @@ public class NetworkManager {
 	protected static Map<String, ServerStructure> NETWORK_SERVERS = new HashMap<String, ServerStructure>();
 	protected static Map<String, GameStructure> NETWORK_GAMES = new HashMap<String, GameStructure>();
 	
-	public static ExecutorService NETWORK_UPDATER = null;
+	public static Thread NETWORK_UPDATER = null;
 	public static Boolean MAINTENANCE_MODE = false;
 	
 	public static void start() {
 		
-		NETWORK_UPDATER = Executors.newFixedThreadPool(1);
-		
-		NETWORK_UPDATER.execute(new Runnable() {
+		NETWORK_UPDATER = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				
 				K : while(true) {
 					
-					if(NETWORK_SERVERS.size() <= 0) {
-						sleep(250);
-						continue K;
-					}
+					try {
+						
+						Iterator<Map.Entry<String, ServerStructure>> iterate = NETWORK_SERVERS.entrySet().iterator();
+		            	
+		            	E : while(iterate.hasNext()) {
+		            		
+		            		Map.Entry<String, ServerStructure> next = iterate.next();
+		            		
+		            		if(next.getValue() != null) {
+		            			
+		            			if(!SocketHelper.isLocalPortInUse(
+		            					NetworkManager.NETWORK_SERVERS.get(next.getValue().getServerName()).getServerPort())) {
+		            				
+		            				GameStructure game = NETWORK_GAMES.containsKey(next.getValue().getServerName()) ? NETWORK_GAMES.get(next.getValue().getServerName()) : null;
+		            				NetworkManager.NETWORK_SERVERS.remove(next.getValue().getServerName());
+		            				
+		            				if(OmniCore.DEBUG)
+		            					Console.WRITTER.printInfo("DEBUG : Se removió la estructura de servidor " + next.getValue().getServerName());
+		            				
+		            				if(game != null) {
+		            					
+		            					Iterator<GameGetter> game_iterate = GameManager.GAME_GETTER_HANDLER.getGetters().iterator();
+		            					
+		            					A : while(game_iterate.hasNext()) {
+		            		        		
+		            						GameGetter nextgame = game_iterate.next();
+		            						
+		            		        		if(nextgame.getStructure() == null)
+		            		        			continue A;
+		            		        		
+		            						if(nextgame.getStructure().getServerName().equals(game.getServerName())) {
+		            							GameManager.GAME_GETTER_HANDLER.removeGetter(nextgame);
+		            							break A;
+		            						}
+		            						
+		            					}
+		            					
+		            					NETWORK_GAMES.remove(game.getServerName());
+		            					continue E;
+		            					
+		            				}
+		            				
+								}
+		            			
+		            		}
+		            	}
 					
-					Iterator<Map.Entry<String, ServerStructure>> iterate = NETWORK_SERVERS.entrySet().iterator();
-	            	
-	            	E : while(iterate.hasNext()) {
-	            		
-	            		Map.Entry<String, ServerStructure> next = iterate.next();
-	            		
-	            		if(next.getValue() != null) {
-	            			
-	            			if(!SocketHelper.isLocalPortInUse(
-	            					NetworkManager.NETWORK_SERVERS.get(next.getValue().getServerName()).getServerPort())) {
-	            				
-	            				GameStructure game = null;
-	            				
-	            				NetworkManager.NETWORK_SERVERS.remove(next.getValue().getServerName());
-	            				
-	            				if(NETWORK_GAMES.containsKey(next.getValue().getServerName())) game = NETWORK_GAMES.get(next.getValue().getServerName());
-	            				
-	            				if(game != null) {
-	            					
-	            					Iterator<Map.Entry<GamePreset, GameStructure>> game_iterate = GameManager.NEXT_GAME_SERVER.entrySet().iterator();
-	            					
-	            					A : while(game_iterate.hasNext()) {
-	            		        		
-	            		        		Map.Entry<GamePreset, GameStructure> nextgame = game_iterate.next();
-	            						
-	            		        		if(next.getValue() == null) continue A;
-	            		        		
-	            						if(next.getValue().getServerName() == game.getServerName()) {
-	            							GameManager.NEXT_GAME_SERVER.put(nextgame.getKey(), null);
-	            							break A;
-	            						}
-	            						
-	            					}
-	            					
-	            					NETWORK_GAMES.remove(game.getServerName());
-	            					continue E;
-	            					
-	            				}
-	            				
-							}
-	            			
-	            		}
-	            	}
-				
-	            	sleep(250);
-	            	continue K;
+		            	sleep(250);
+		            	continue K;
+						
+					} catch(Exception e) {
+						
+						sleep(1);
+						continue K;
+						
+					}
 					
 				}
             	
@@ -112,6 +117,8 @@ public class NetworkManager {
 			
 		});
 		
+		NETWORK_UPDATER.start();
+		
 	}
 	
 	public static void reloadServers(ServerType st) {
@@ -120,12 +127,48 @@ public class NetworkManager {
 			entry.getValue().getServerType() == st).forEach(entry ->
 					{
 						
-						Packets.STREAMER.streamPacket(new ServerReloadInfoPacket()
-								
-								.setServername(entry.getKey())
-								.setSocketport(entry.getValue().getSocketPort())
-								
-								.build().setReceiver(PacketSenderType.OMNICORD));
+						List<GameGetter> toRemoveGetters = Lists.newArrayList();
+						List<String> toRemoveStructures = Lists.newArrayList();
+						
+						GameManager.GAME_GETTER_HANDLER.getGetters().forEach(getter -> {
+							
+							if(getter.getPreset().getServertype() == st)
+								toRemoveGetters.add(getter);
+							
+						});
+						
+						NETWORK_GAMES.entrySet().forEach(k -> {
+							
+							if(!toRemoveStructures.contains(k.getKey()))
+								if(k.getValue().getGamePreset().getServertype() == st)
+									toRemoveStructures.add(k.getKey());
+							
+						});
+						
+						NETWORK_SERVERS.entrySet().forEach(k -> {
+							
+							if(!toRemoveStructures.contains(k.getKey()))
+								if(k.getValue().getServerType() == st)
+									toRemoveStructures.add(k.getKey());
+							
+						});
+						
+						toRemoveGetters.forEach(getter -> {
+							GameManager.GAME_GETTER_HANDLER.removeGetter(getter);
+						});
+						
+						toRemoveStructures.forEach(id -> {
+							
+							if(NETWORK_SERVERS.containsKey(id))
+								NETWORK_SERVERS.remove(id);
+							
+							if(NETWORK_GAMES.containsKey(id))
+								NETWORK_GAMES.remove(id);
+							
+						});
+						
+						Packets.STREAMER.streamPacket(new ResposeReloadInfoPacket()
+								.build().setReceiver(entry.getValue().getSocketPort()));
 						
 					}
 			);
@@ -140,9 +183,27 @@ public class NetworkManager {
 				NETWORK_GAMES.remove(servername);
 			}
 			
+			Iterator<GameGetter> game_iterate = GameManager.GAME_GETTER_HANDLER.getGetters().iterator();
+			
+			while(game_iterate.hasNext()) {
+        		
+				GameGetter nextgame = game_iterate.next();
+				
+        		if(nextgame.getStructure() == null) continue;
+        		
+				if(nextgame.getStructure().getServerName().equals(servername)) {
+					GameManager.GAME_GETTER_HANDLER.removeGetter(nextgame);
+					break;
+				}
+				
+			}
+			
 			if(NETWORK_SERVERS.containsKey(servername)) {
 				NETWORK_SERVERS.remove(servername);
 			}
+			
+			if(OmniCore.DEBUG)
+				Console.WRITTER.printInfo("DEBUG : Se removió la estructura de servidor " + servername);
 			
 			return InjectorStatus.SUCESS;
 			
@@ -156,11 +217,13 @@ public class NetworkManager {
 		
 		if(serverstructure != null) {
 			
-			if(NETWORK_GAMES.containsKey(serverstructure.getServerName())) {
+			if(NETWORK_GAMES.containsKey(serverstructure.getServerName()))
 				NETWORK_GAMES.remove(serverstructure.getServerName());
-			}
 			
 			NETWORK_SERVERS.put(serverstructure.getServerName(), serverstructure);
+			
+			if(OmniCore.DEBUG)
+				Console.WRITTER.printInfo("DEBUG : Se añadió la estructura de servidor " + serverstructure.getServerName());
 			
 			Packets.STREAMER.streamPacket(new ServerSocketInfoPacket()
 					
@@ -185,16 +248,16 @@ public class NetworkManager {
 				return InjectorStatus.CANNOT_REGISTER;
 			}
 			
-			Iterator<Map.Entry<GamePreset, GameStructure>> iterate = GameManager.NEXT_GAME_SERVER.entrySet().iterator();
+			Iterator<GameGetter> game_iterate = GameManager.GAME_GETTER_HANDLER.getGetters().iterator();
 			
-        	while(iterate.hasNext()) {
+			while(game_iterate.hasNext()) {
         		
-        		Map.Entry<GamePreset, GameStructure> next = iterate.next();
+				GameGetter nextgame = game_iterate.next();
 				
-        		if(next.getValue() == null) continue;
+        		if(nextgame.getStructure() == null) continue;
         		
-				if(next.getValue().getServerName() == gamestructure.getServerName()) {
-					GameManager.NEXT_GAME_SERVER.put(next.getKey(), null);
+				if(nextgame.getStructure().getGamePreset() == gamestructure.getGamePreset()) {
+					GameManager.GAME_GETTER_HANDLER.removeGetter(nextgame);
 					break;
 				}
 				

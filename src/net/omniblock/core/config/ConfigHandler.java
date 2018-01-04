@@ -1,6 +1,6 @@
 package net.omniblock.core.config;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import net.omniblock.core.config.type.DatabaseConfig;
@@ -16,17 +16,17 @@ public class ConfigHandler {
 	
 	protected static WeekPrizeConfig WEEKPRIZE_CONFIG;
 	
-	static {
+	public static void create(){
 		
 		try {
 			
-			DEFAULT_CONFIG = new DefaultConfig().create("config.cfg");
-			DATABASE_CONFIG = new DatabaseConfig().create("database.cfg");
-			VERSION_CONFIG = new VersionConfig().create("version.cfg");
+			DEFAULT_CONFIG = new DefaultConfig().create("config.yml");
+			DATABASE_CONFIG = new DatabaseConfig().create("database.yml");
+			VERSION_CONFIG = new VersionConfig().create("version.yml");
 			
-			WEEKPRIZE_CONFIG = new WeekPrizeConfig().create("addons/weekprize.cfg");
+			WEEKPRIZE_CONFIG = new WeekPrizeConfig().create("addons/weekprize.yml");
 			
-		} catch (MalformedURLException | URISyntaxException e) {
+		} catch (URISyntaxException | IOException e) {
 			
 			e.printStackTrace();
 			

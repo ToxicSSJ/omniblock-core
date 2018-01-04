@@ -2,6 +2,7 @@ package net.omniblock.core;
 
 import java.util.concurrent.TimeUnit;
 
+import net.omniblock.core.config.ConfigHandler;
 import net.omniblock.core.protocol.console.Console;
 import net.omniblock.core.protocol.manager.network.GameManager;
 import net.omniblock.core.protocol.manager.network.NetworkManager;
@@ -27,7 +28,8 @@ import net.omniblock.packets.object.external.SystemType;
  */
 public class OmniCore {
 
-	private static String OS = System.getProperty("os.name").toLowerCase();
+	private static final String OS = System.getProperty("os.name").toLowerCase();
+	public static boolean DEBUG = true;
 	
 	public static void main(String[] args) {
 		
@@ -35,6 +37,8 @@ public class OmniCore {
 			
 			Console.DRAWER.printDraw("logon.draw");
 			Console.WRITTER.printInfo("Inicializando librerias...");
+			
+			ConfigHandler.create();
 			
 			sleep(TimeUnit.SECONDS, 3);
 			
@@ -53,6 +57,8 @@ public class OmniCore {
 						.build().setReceiver(PacketSenderType.OMNICORD));
 				
 				Console.WRITTER.printInfo("Conectado! Iniciando sistema de procesamiento de paquetes...");
+				
+				// Database.makeConnection();
 				
 				NetworkManager.start();
 				GameManager.start();

@@ -13,17 +13,27 @@ public class ReloadCommand implements Command {
 		
 		if(command.equalsIgnoreCase("reload")) {
 			
-			if(args.length >= 1) {
+			if(args.length == 1) {
 				
 				if(args[0].equalsIgnoreCase("all")) {
 					
 					Console.WRITTER.printLine("Se hará reload a todos los servidores de la Network, Esto puede generar lag. Recuerde haber activado el modo mantenimiento previamente para mayor rendimiento...");
 					
-					for(ServerType st : ServerType.values()){
+					for(ServerType st : ServerType.values())
 						NetworkManager.reloadServers(st);
-					}
 					
 					Console.WRITTER.printInfo("Se ha enviado el paquete de relodeo a los servidores correctamente!");
+					return true;
+					
+				}
+				
+				if(args[0].equalsIgnoreCase("auth")) {
+
+					Console.WRITTER.printLine("Se hará reload al servidor tipo Auth de la Network, Esto puede generar lag. Recuerde haber activado el modo mantenimiento previamente para mayor rendimiento...");
+					
+					NetworkManager.reloadServers(ServerType.MAIN_AUTH_SERVER);
+					
+					Console.WRITTER.printInfo("Se ha enviado el paquete de relodeo al servidor correctamente!");
 					return true;
 					
 				}

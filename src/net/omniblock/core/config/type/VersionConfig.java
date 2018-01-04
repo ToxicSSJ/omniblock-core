@@ -1,61 +1,59 @@
 package net.omniblock.core.config.type;
 
 import java.io.File;
-import java.net.MalformedURLException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
-import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import net.omniblock.core.config.Config;
 
 public class VersionConfig implements Config {
 
-	protected Configuration bundle;
+	protected FileConfiguration bundle;
+	protected File file;
+	
 	protected String filename;
 	
 	@Override
-	public VersionConfig create(String filename) throws URISyntaxException, MalformedURLException {
+	public VersionConfig create(String filename) throws URISyntaxException, IOException {
 		
 		this.filename = filename;
 		
-		File file = new File(Config.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath(), "/config/" + filename);
+		File file = new File(Config.getJARDirectory() + "/config/" + filename);
 		
 		if(!file.exists()){
 			
-			file.mkdirs();
-			Config.copyFile(ClassLoader.getSystemResourceAsStream("/config/" + filename), file);
+			InputStream stream = VersionConfig.class.getResourceAsStream("/config/" + filename);
+			Config.copyFile(stream, file);
 			
-		}
+		} 
 		
-		try { this.bundle = getBuilder().getConfiguration(); } 
-		catch (ConfigurationException e) { e.printStackTrace(); }
+		
+		this.bundle = YamlConfiguration.loadConfiguration(file);
+		this.file = file;
 		
 		return this;
 		
 	}
 	
 	@Override
-	public FileBasedConfigurationBuilder<FileBasedConfiguration> getBuilder(){
-		
-		Parameters params = new Parameters();
-		
-		return new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-			    .configure(params.properties()
-			    		  .setFileName(filename)
-			    		  .setListDelimiterHandler(new DefaultListDelimiterHandler(',')
-			    		  )
-			   );
+	public void save() {
+		try { bundle.save(file);
+		} catch (IOException e) { e.printStackTrace(); }
+		return;
 	}
 	
 	@Override
-	public Configuration getConfiguration() {
+	public File getFile() {
+		return file;
+	}
+	
+	@Override
+	public FileConfiguration getConfiguration() {
 		return bundle;
 	}
-
+	
 }

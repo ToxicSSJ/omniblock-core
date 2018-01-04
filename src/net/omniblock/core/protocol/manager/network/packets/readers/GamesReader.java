@@ -6,9 +6,11 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.omniblock.core.config.ConfigHandler;
+import net.omniblock.core.database.bases.SkywarsBase;
 import net.omniblock.core.protocol.manager.network.GameManager;
 import net.omniblock.core.protocol.manager.network.NetworkManager;
 import net.omniblock.packets.network.Packets;
@@ -18,6 +20,8 @@ import net.omniblock.packets.network.structure.data.PacketStructure.DataType;
 import net.omniblock.packets.network.structure.packet.GameOnlineInfoPacket;
 import net.omniblock.packets.network.structure.packet.RequestInformationPacket;
 import net.omniblock.packets.network.structure.packet.ResposeInformationPacket;
+import net.omniblock.packets.network.tool.annotation.PacketEvent;
+import net.omniblock.packets.network.tool.annotation.type.PacketPriority;
 import net.omniblock.packets.network.tool.object.PacketReader;
 
 public class GamesReader {
@@ -104,15 +108,15 @@ public class GamesReader {
 		
 		Packets.READER.registerReader(new PacketReader<RequestInformationPacket>(){
 
-			public String weekprizeformat = "dd-MMM-yyyy HH:mm:ss";
+			public String weekprizeformat = "dd/MM/yyyy HH:mm:ss";
 			
 			@Override
+			@PacketEvent(priority = PacketPriority.CONSOLE)
 			public void readPacket(PacketSocketData<RequestInformationPacket> packetsocketdata) {
 				
 				PacketStructure structure = packetsocketdata.getStructure();
 				
 				String servername = structure.get(DataType.STRINGS, "servername");
-				
 				String infokey = structure.get(DataType.STRINGS, "infokey");
 				String infovalue = structure.get(DataType.STRINGS, "infovalue");
 				
@@ -122,24 +126,35 @@ public class GamesReader {
 						
 						String respose = "WAITING";
 						
-						if(ConfigHandler.getWeekPrizeConfig().getConfiguration().containsKey("weekprizes.skywars")){
+						if(ConfigHandler.getWeekPrizeConfig().getConfiguration().isSet("weekprizes.skywars")){
 							
-							Date date = new Date();
 							Map<Date, String> dates = new HashMap<Date, String>();
+							List<String> configdates = ConfigHandler.getWeekPrizeConfig().getConfiguration().getStringList("weekprizes.skywars");
 							
-							for(String cache : ConfigHandler.getWeekPrizeConfig().getConfiguration().getStringArray("weekprizes.skywars")){
+							for(String cache : configdates){
 								
 								try { dates.put(new SimpleDateFormat(weekprizeformat).parse(cache), cache);
-								} catch (ParseException e) { }
+								} catch (ParseException e) { e.printStackTrace(); }
 								
 							}
 							
-							for (Date cache: dates.keySet()) {
-							    if (date.compareTo(date) <= 0) {
-							        if (date.compareTo(date) > 0) {
-							            respose = dates.get(cache);
-							        }
-							    }
+							for (Date cache : dates.keySet()) {
+								
+								if(!cache.after(new Date())) {
+									
+									configdates.remove(dates.get(cache));
+									ConfigHandler.getWeekPrizeConfig().getConfiguration().set("weekprizes.skywars", configdates);
+									
+									ConfigHandler.getWeekPrizeConfig().save();
+									
+									dates.remove(cache);
+									SkywarsBase.giveAll();
+									continue;
+									
+								}
+								
+							    respose = dates.get(cache);
+							    
 							}
 							
 						}
