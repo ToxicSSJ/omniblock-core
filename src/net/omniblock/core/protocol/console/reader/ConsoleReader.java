@@ -59,10 +59,11 @@ public class ConsoleReader implements Runnable, KeyListener {
 	@Override
 	public void run() {
 		
+		InputStreamReader instream = new InputStreamReader(System.in);
+		
 		while(read) {
 			
-			try (InputStreamReader instream = new InputStreamReader(System.in);
-			        BufferedReader buffer = new BufferedReader(instream)) {
+			try (BufferedReader buffer = new BufferedReader(instream)) {
 				
 				String writed = "", original = "";
 				String[] args = new String[0];
@@ -85,21 +86,15 @@ public class ConsoleReader implements Runnable, KeyListener {
 	                	
 	                }
 	                
-	                if(!CommandCatcher.catchCommand(original, writed, args)) {
+	                if(!CommandCatcher.catchCommand(original, writed, args))
 	                	Console.WRITTER.printError(CommandCatcher.NOT_RECOGNIZED_COMMAND.replaceFirst("%s", original));
-	                }
 	                
 	                run();
 	            	return;
 			    	
 			    }
 			    
-			} catch (Exception e) {
-				
-			    e.printStackTrace();
-			    
-			}
-			
+			} catch (Exception e) {}
             
         }
 		
