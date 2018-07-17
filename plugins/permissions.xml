@@ -5,7 +5,7 @@
         <Enum>USER</Enum>
         <Carrier>@NONE</Carrier>
         <Permissions>
-            ;
+            survival.openGUI;
         </Permissions>
     </Rank>
     <Rank>
@@ -13,7 +13,7 @@
         <Enum>GOLEM</Enum>
         <Carrier>USER</Carrier>
         <Permissions>
-            skywars.powers;a
+            skywars.powers;survival.openGUI;a
         </Permissions>
     </Rank>
     <Rank>
@@ -21,7 +21,7 @@
         <Enum>TITAN</Enum>
         <Carrier>GOLEM</Carrier>
         <Permissions>
-            skywars.powers;a
+            skywars.powers;survival.openGUI;a
         </Permissions>
     </Rank>
     <Rank>
@@ -29,7 +29,7 @@
         <Enum>HELPER</Enum>
         <Carrier>TITAN</Carrier>
         <Permissions>
-            skywars.powers;a
+            skywars.powers;survival.openGUI;a
         </Permissions>
     </Rank>
     <Rank>
@@ -37,7 +37,7 @@
         <Enum>MOD</Enum>
         <Carrier>HELPER</Carrier>
         <Permissions>
-            skywars.powers;a
+            skywars.powers;survival.openGUI;a
         </Permissions>
     </Rank>
     <Rank>
@@ -45,7 +45,7 @@
         <Enum>BNF</Enum>
         <Carrier>USER</Carrier>
         <Permissions>
-            skywars.powers;a
+            skywars.powers;omniblock.network.cmd.ignore;shop.adminshop.adminbreak;shop.usershop.adminbreak;survival.openGUI;a
         </Permissions>
     </Rank>
     <Rank>
@@ -53,7 +53,7 @@
         <Enum>GM</Enum>
         <Carrier>BNF</Carrier>
         <Permissions>
-            skywars.powers;a
+            skywars.powers;omniblock.network.cmd.ignore;shop.adminshop.admin;shop.adminshop.adminbreak;shop.usershop.adminbreak;survival.openGUI;a
         </Permissions>
     </Rank>
     <Rank>

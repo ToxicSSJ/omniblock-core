@@ -3,6 +3,10 @@
     <output-path>$PROJECT_DIR$/../CompiledJars</output-path>
     <root id="archive" name="OmniCore.jar">
       <element id="module-output" name="OmniCore" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="dir-copy" path="$PROJECT_DIR$/plugins" />
     </root>
   </artifact>
 </component>

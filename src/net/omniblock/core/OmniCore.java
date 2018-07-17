@@ -3,6 +3,7 @@ package net.omniblock.core;
 import java.util.concurrent.TimeUnit;
 
 import net.omniblock.core.config.ConfigHandler;
+import net.omniblock.core.database.Database;
 import net.omniblock.core.protocol.console.Console;
 import net.omniblock.core.protocol.manager.network.GameManager;
 import net.omniblock.core.protocol.manager.network.NetworkManager;
@@ -48,17 +49,17 @@ public class OmniCore {
 				
 				OmniPackets.setupSystem(SystemType.OMNICORE);
 				OmniPackets.setDebug(false);
-				
+
 				PacketsAdapter.registerReaders();
-				
+
 				Sockets.SERVER.startServer(SocketHelper.OMNICORE_SOCKET_PORT);
-				
+
 				Packets.STREAMER.streamPacket(new WelcomeProxyPacket()
 						.build().setReceiver(PacketSenderType.OMNICORD));
 				
 				Console.WRITTER.printInfo("Conectado! Iniciando sistema de procesamiento de paquetes...");
 				
-				// Database.makeConnection();
+				Database.makeConnection();
 				
 				NetworkManager.start();
 				GameManager.start();

@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
+import net.omniblock.core.OmniCore;
+import net.omniblock.packets.network.tool.config.Config;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-
-import net.omniblock.core.config.Config;
 
 public class VersionConfig implements Config {
 
@@ -22,7 +22,7 @@ public class VersionConfig implements Config {
 		
 		this.filename = filename;
 		
-		File file = new File(Config.getJARDirectory() + "/config/" + filename);
+		File file = new File(Config.getJARDirectory(OmniCore.class) + "/config/" + filename);
 		
 		if(!file.exists()){
 			

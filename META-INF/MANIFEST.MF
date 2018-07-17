@@ -1,1 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: OmniCore_lib/Spigot_1_8_R3.jar OmniCore_lib/OmniblockPacke
+ ts.jar
 Main-Class: net.omniblock.core.OmniCore
+

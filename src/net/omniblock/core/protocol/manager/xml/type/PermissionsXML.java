@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 
-import net.omniblock.core.config.Config;
 import net.omniblock.core.protocol.manager.xml.XML;
+import net.omniblock.packets.network.tool.config.Config;
 
 public class PermissionsXML implements XML {
 
