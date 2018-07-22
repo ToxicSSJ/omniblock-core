@@ -24,9 +24,10 @@
             skywars.powers;survival.openGUI;a
         </Permissions>
     </Rank>
+
     <Rank>
         <ID>3</ID>
-        <Enum>HELPER</Enum>
+        <Enum>YOUTUBE</Enum>
         <Carrier>TITAN</Carrier>
         <Permissions>
             skywars.powers;survival.openGUI;a
@@ -34,39 +35,55 @@
     </Rank>
     <Rank>
         <ID>4</ID>
-        <Enum>MOD</Enum>
-        <Carrier>HELPER</Carrier>
+        <Enum>TWITCH</Enum>
+        <Carrier>TITAN</Carrier>
         <Permissions>
             skywars.powers;survival.openGUI;a
         </Permissions>
     </Rank>
     <Rank>
         <ID>5</ID>
-        <Enum>BNF</Enum>
-        <Carrier>USER</Carrier>
+        <Enum>HELPER</Enum>
+        <Carrier>TITAN</Carrier>
         <Permissions>
-            skywars.powers;omniblock.network.cmd.ignore;shop.adminshop.adminbreak;shop.usershop.adminbreak;survival.openGUI;a
+            omniblock.network.cmd.ignore;skywars.powers;omniblock.network.bank;omniblock.network.moderator.tp;omniblock.network.moderator.mute;omniblock.network.moderator.fly;omniblock.network.moderator.invsee;omniblock.network.moderator.kick
         </Permissions>
     </Rank>
     <Rank>
         <ID>6</ID>
-        <Enum>GM</Enum>
-        <Carrier>BNF</Carrier>
+        <Enum>MOD</Enum>
+        <Carrier>HELPER</Carrier>
         <Permissions>
-            skywars.powers;omniblock.network.cmd.ignore;shop.adminshop.admin;shop.adminshop.adminbreak;shop.usershop.adminbreak;survival.openGUI;a
+            omniblock.network.cmd.ignore;skywars.powers;omniblock.network.bank;omniblock.network.moderator.tp;omniblock.network.moderator.mute;omniblock.network.moderator.fly;omniblock.network.moderator.invsee;omniblock.network.moderator.kick;omniblock.network.moderator.ban
         </Permissions>
     </Rank>
     <Rank>
         <ID>7</ID>
-        <Enum>ADMIN</Enum>
-        <Carrier>MOD</Carrier>
+        <Enum>BNF</Enum>
+        <Carrier>HELPER</Carrier>
         <Permissions>
-            *;omniblock.network.cmd.ignore;omniblock.network.moderator;skywars.powers;omniblock.network.bank
+            skywars.powers;omniblock.network.cmd.ignore;shop.usershop.adminbreak;survival.openGUI;omniblock.network.moderator.fly;omniblock.network.moderator.tp
         </Permissions>
     </Rank>
     <Rank>
         <ID>8</ID>
-        <Enum>CEO</Enum>
+        <Enum>GM</Enum>
+        <Carrier>BNF</Carrier>
+        <Permissions>
+            *;omniblock.network.cmd.ignore;skywars.powers;omniblock.network.bank;omniblock.network.cmd.ignore;skywars.powers;omniblock.network.bank;omniblock.network.moderator.tp;omniblock.network.moderator.mute;omniblock.network.moderator.fly;omniblock.network.moderator.invsee;omniblock.network.moderator.kick;omniblock.network.moderator.ban
+        </Permissions>
+    </Rank>
+    <Rank>
+        <ID>9</ID>
+        <Enum>ADMIN</Enum>
+        <Carrier>MOD</Carrier>
+        <Permissions>
+            *;omniblock.network.cmd.ignore;skywars.powers;omniblock.network.bank;omniblock.network.moderator.tp
+        </Permissions>
+    </Rank>
+    <Rank>
+        <ID>10</ID>
+        <Enum>DIRECTOR</Enum>
         <Carrier>ADMIN</Carrier>
         <Permissions>
             *;omniblock.network.cmd.ignore;omniblock.network.moderator;skywars.powers;omniblock.network.bank
