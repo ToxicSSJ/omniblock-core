@@ -24,13 +24,12 @@
             skywars.powers;survival.openGUI;a
         </Permissions>
     </Rank>
-
     <Rank>
         <ID>3</ID>
         <Enum>YOUTUBE</Enum>
         <Carrier>TITAN</Carrier>
         <Permissions>
-            skywars.powers;survival.openGUI;a
+            skywars.powers;survival.openGUI;omniblock.network.moderator.fly
         </Permissions>
     </Rank>
     <Rank>
@@ -38,7 +37,7 @@
         <Enum>TWITCH</Enum>
         <Carrier>TITAN</Carrier>
         <Permissions>
-            skywars.powers;survival.openGUI;a
+            skywars.powers;survival.openGUI;omniblock.network.moderator.fly
         </Permissions>
     </Rank>
     <Rank>
